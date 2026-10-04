@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Buscador de tareas</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="min-h-screen bg-slate-950 text-slate-100">
+        <main class="mx-auto max-w-2xl px-4 py-12 sm:px-6">
+            <header class="mb-8">
+                <p
+                    class="mb-2 text-sm font-semibold uppercase tracking-wider text-indigo-400">Organización</p>
+                <h1 class="text-3xl font-bold tracking-tight">Buscar tareas</h1>
+                <p class="mt-2 text-slate-400">Encuentra tareas por título o
+                    categoría.</p>
+            </header>
+
+            <label for="buscador" class="sr-only">Buscar tareas</label>
+            <input
+                id="buscador"
+                type="search"
+                placeholder="Buscar tareas..."
+                autocomplete="off"
+                class="mb-6 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30">
+
+            <ul id="lista-tareas" class="space-y-3" aria-live="polite"></ul>
+        </main>
+
+        <script>
+    const tareas = [
+      { id: 1, titulo: "Preparar informe semanal", categoria: "Trabajo", estado: "En progreso" },
+      { id: 2, titulo: "Revisar diseño de la página", categoria: "Diseño", estado: "Pendiente" },
+      { id: 3, titulo: "Actualizar documentación", categoria: "Desarrollo", estado: "Completada" },
+      { id: 4, titulo: "Planificar reunión de equipo", categoria: "Trabajo", estado: "Pendiente" },
+      { id: 5, titulo: "Corregir errores de búsqueda", categoria: "Desarrollo", estado: "En progreso" }
+    ];
+
+    const buscador = document.getElementById("buscador");
+    const lista = document.getElementById("lista-tareas");
+
+    function renderizarTareas(termino = "") {
+      const consulta = termino.trim().toLocaleLowerCase("es");
+      const resultados = tareas.filter((tarea) =>
+        tarea.titulo.toLocaleLowerCase("es").includes(consulta) ||
+        tarea.categoria.toLocaleLowerCase("es").includes(consulta)
+      );
+
+      lista.replaceChildren();
+
+      if (resultados.length === 0) {
+        const mensaje = document.createElement("li");
+        mensaje.className = "rounded-xl border border-slate-800 bg-slate-900 p-6 text-center text-slate-400";
+        mensaje.textContent = "No se encontraron resultados";
+        lista.appendChild(mensaje);
+        return;
+      }
+
+      resultados.forEach((tarea) => {
+        const elemento = document.createElement("li");
+        elemento.className = "rounded-xl border border-slate-800 bg-slate-900 p-5 shadow-sm";
+
+        const fila = document.createElement("div");
+        fila.className = "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between";
+
+        const detalles = document.createElement("div");
+
+        const titulo = document.createElement("h2");
+        titulo.className = "font-semibold text-slate-100";
+        titulo.textContent = tarea.titulo;
+
+        const categoria = document.createElement("p");
+        categoria.className = "mt-1 text-sm text-slate-400";
+        categoria.textContent = `Categoría: ${tarea.categoria}`;
+
+        const estado = document.createElement("span");
+        estado.className = "inline-flex w-fit rounded-full bg-indigo-500/15 px-3 py-1 text-xs font-medium text-indigo-300";
+        estado.textContent = tarea.estado;
+
+        detalles.append(titulo, categoria);
+        fila.append(detalles, estado);
+        elemento.appendChild(fila);
+        lista.appendChild(elemento);
+      });
+    }
+
+    buscador.addEventListener("input", (evento) => {
+      renderizarTareas(evento.target.value);
+    });
+
+    renderizarTareas();
+  </script>
+    </body>
+</html>
